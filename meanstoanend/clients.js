@@ -40,13 +40,6 @@ class Client {
   insert({ timestamp, val }) {
     const lower = lowerBound( this.timestamps, timestamp );
     this.timestamps.splice(lower, 0, timestamp );
-    //kthis.timestamps.push( timestamp );
-    // super lazy. should either insert correctly, or use btrees
-    /*
-    this.timestamps = this.timestamps.sort(function(a, b) {
-      return a - b;
-    });
-    */
     this.timeseries[ timestamp ] = val;
   }
 
@@ -54,33 +47,28 @@ class Client {
     if ( min_time > max_time ) {
       return 0;
     }
+
     const lower = lowerBound( this.timestamps, min_time );
     const upper = upperBound( this.timestamps, max_time );
     let timestamps = this.timestamps.slice( lower, upper );
+
     if( lower === upper ) {
+      // check if the timestamp is actually in bounds
       if( this.timestamps[ lower ] > this.min_time 
         && this.timestamps[ upper ] < this.max_time ) {
         timestamps = [ this.timestamps[ lower ] ];
       } else {
-        return 0 
+        return 0;
       }
     }
     const vals = timestamps.map( ts => {
-      return this.timeseries[ ts ]
+      return this.timeseries[ ts ];
     });
+
     if( vals.length === 0 ) {
       return 0;
     }
     const sum = vals.reduce(( a, b ) => a + b, 0);
-    console.log({
-      sum,
-      min_time,
-      max_time,
-      lower,
-      upper,
-      timestamps
-    });
-    console.log( `finsihed querying ${min_time}: ${ max_time} for ${this.id }` )
     return Math.floor( sum / vals.length );
   }
 }
@@ -97,12 +85,11 @@ class Clients {
   }
 
   query({ client_id, min_time, max_time }) {
-    console.log( { min_time, max_time });
     const client = this.clients[ client_id ];
     if( client ) {
       return client.query({ min_time, max_time });
     } else {
-      return
+      return undefined;
     }
   }
 }

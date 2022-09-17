@@ -3,12 +3,9 @@ const clients = require('./clients.js');
 class Request {
   constructor( buffer, client_id ) {
     this.client_id = client_id;
-    this.type = String.fromCharCode( buffer[ 0 ] )
-    if( !['I','Q'].includes( this.type ) ){
-      console.log( this.type || 'undefined' )
-    }
-    this.first = buffer.slice( 1, 5 );
-    this.second = buffer.slice( 5 );
+    this.type      = String.fromCharCode( buffer[ 0 ] )
+    this.first     = buffer.slice( 1, 5 );
+    this.second    = buffer.slice( 5 );
   }
 
   handleRequest() {
