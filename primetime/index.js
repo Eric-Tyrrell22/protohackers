@@ -28,12 +28,16 @@ function isPrime(a) {
 function craftPrimeResponse({ method, number }) {
   let num_is_prime = isPrime( number );
   let new_method = 'isPrime'
+
+  // create malformed packet by messing up the method name
   if( method !== 'isPrime' ) {
     new_method = 'notprime'
   }
+
   if( typeof number !== 'number' ) {
     new_method = 'notprime'
   }
+
   return JSON.stringify({
     method: new_method,
     prime: num_is_prime
